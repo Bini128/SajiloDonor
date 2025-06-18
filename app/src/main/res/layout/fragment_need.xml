@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nude"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/header_title"
+            android:background="@color/white"
+            android:text="Find Donors"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/second_title"
+            android:background="@color/white"
+            android:text="According Your Blood Type"
+            android:padding="10dp"
+            android:textSize="15sp"/>
+    <!-- Blood Group Buttons -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <Button
+            android:id="@+id/btnAPlus"
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:text="A+"
+            android:background="@drawable/circle_button"
+            />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnAMinus"
+            android:background="@drawable/circle_button"
+            android:text="A-" />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnBPlus"
+            android:background="@drawable/circle_button"
+            android:text="B+" />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnBminus"
+            android:background="@drawable/circle_button"
+            android:text="B-" />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnOPlus"
+            android:background="@drawable/circle_button"
+            android:text="O+" />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnOminus"
+            android:background="@drawable/circle_button"
+            android:text="O-" />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnABPlus"
+            android:backgroundTint="@color/red"
+            android:background="@drawable/circle_button"
+            android:text="AB+" />
+        <Button
+            android:layout_width="58dp"
+            android:layout_height="60dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:id="@+id/btnABminus"
+            android:background="@drawable/circle_button"
+            android:text="AB-" />
+    </LinearLayout>
+        </HorizontalScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewDonors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+    </LinearLayout>
+</ScrollView>

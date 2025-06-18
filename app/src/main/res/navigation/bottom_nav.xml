@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_nav"
+    app:startDestination="@id/home">
+
+    <fragment android:id="@+id/home"
+        android:label="Home"
+        android:name="com.example.donorblood.ui.home"
+        tools:layout="@layout/fragment_home"/>
+
+    <fragment android:id="@+id/donor"
+        android:label="Donor"
+        android:name="com.example.donorblood.ui.donate"
+        tools:layout="@layout/fragment_donate"/>
+
+    <fragment android:id="@+id/need"
+    android:label="Need"
+    android:name="com.example.donorblood.ui.need"
+    tools:layout="@layout/fragment_need"/>
+
+    <fragment android:id="@+id/profile"
+    android:label="Profile"
+    android:name="com.example.donorblood.ui.profile"
+    tools:layout="@layout/fragment_profile"/>
+</navigation>
