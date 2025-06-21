@@ -20,8 +20,48 @@
     android:name="com.example.donorblood.ui.need"
     tools:layout="@layout/fragment_need"/>
 
-    <fragment android:id="@+id/profile"
-    android:label="Profile"
-    android:name="com.example.donorblood.ui.profile"
-    tools:layout="@layout/fragment_profile"/>
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.example.donorblood.ui.Profile"
+        android:label="Profile"
+        >
+
+        <action
+            android:id="@+id/action_profile_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_requestBloodFragment"
+            app:destination="@id/requestBloodFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_changeLocationFragment"
+            app:destination="@id/changeLocationFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_donateRequestFragment"
+            app:destination="@id/donateRequestFragment" />
+    </fragment>
+
+    <!-- Destination Fragments -->
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.donorblood.profile.Edit_profile"
+        android:label="Edit Profile" />
+
+    <fragment
+        android:id="@+id/requestBloodFragment"
+        android:name="com.example.donorblood.profile.need_blood"
+        android:label="Request Blood" />
+
+    <fragment
+        android:id="@+id/changeLocationFragment"
+        android:name="com.example.donorblood.profile.location"
+        android:label="Change Location" />
+
+    <fragment
+        android:id="@+id/donateRequestFragment"
+        android:name="com.example.donorblood.profile.donate_blood"
+        android:label="Donate Request" />
+
 </navigation>

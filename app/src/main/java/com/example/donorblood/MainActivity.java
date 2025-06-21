@@ -1,6 +1,7 @@
 package com.example.donorblood;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -20,6 +21,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 🔒 Check if user is already logged in
+        SharedPreferences preferences = getSharedPreferences("login_pref", MODE_PRIVATE);
+        boolean isLoggedIn = preferences.getBoolean("isLoggedIn", false);
+
+        if (isLoggedIn) {
+            // ✅ User is logged in, go to dashboard
+            Intent intent = new Intent(MainActivity.this, dashboard.class);
+            startActivity(intent);
+            finish(); // prevent going back to main screen
+            return;
+        }
+
+        // Otherwise, continue showing image slider + start button
         setContentView(R.layout.activity_main);
 
         imageSlider = findViewById(R.id.imageSlider);
@@ -35,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(sliderRunnable, 2000);
 
         startButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this,login.class);
+            Intent intent = new Intent(MainActivity.this, login.class);
             startActivity(intent);
-            finish(); // Optional if you don't want to go back to homepage
+            finish(); // Optional to block back press to this screen
         });
     }
 

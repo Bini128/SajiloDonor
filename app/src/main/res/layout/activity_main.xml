@@ -16,4 +16,5 @@
         android:layout_below="@id/imageSlider"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp" />
+
 </RelativeLayout>

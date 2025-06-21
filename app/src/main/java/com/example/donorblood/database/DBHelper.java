@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.example.donorblood.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "BloodDonor.db";
@@ -77,6 +80,25 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean saveOrUpdateProfile(String email, String imageUri) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("email", email);
+        values.put("photo", imageUri);
+
+        // Try update first
+        int rowsAffected = db.update("user_profile", values, "email = ?", new String[]{email});
+        if (rowsAffected == 0) {
+            // If update failed (new entry), insert
+            long result = db.insert("user_profile", null, values);
+            db.close();
+            return result != -1;
+        } else {
+            db.close();
+            return true;
+        }
+    }
+
     // Insert a new user
     public boolean insertUser(String name, String citizenship, String phone, String address,
                               String email, String dob, String gender, String hashedPassword, String bloodGroup) {
@@ -97,6 +119,7 @@ public class DBHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_USERS, null, values);
         return result != -1;  // Return true if insert success
     }
+
 
     public User getUserByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -161,6 +184,26 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, new String[]{email});
     }
 
+    public List<User> getUsersByBloodType(String bloodType) {
+        List<User> users = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLE_USERS+" WHERE bloodgroup = ?", new String[]{bloodType});
+
+        if (cursor.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+                user.setBloodType(cursor.getString(cursor.getColumnIndexOrThrow("bloodgroup")));
+                users.add(user);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return users;
+    }
 
 }
 

@@ -17,13 +17,13 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.donorblood.R;
+import com.example.donorblood.database.DBHelper;
 
 public class Edit_profile extends Fragment {
 
     private static final int PICK_IMAGE = 1;
     private ImageView imgProfile;
-    private EditText etEmail, etPassword;
-    private Spinner spinnerBloodType;
+    private EditText etEmail;
     private Button btnSave;
     private Uri selectedImageUri;
 
@@ -36,26 +36,31 @@ public class Edit_profile extends Fragment {
 
         imgProfile = view.findViewById(R.id.imgProfile);
         etEmail = view.findViewById(R.id.etEmail);
-        etPassword = view.findViewById(R.id.etPassword);
-        spinnerBloodType = view.findViewById(R.id.spinnerBloodType);
         btnSave = view.findViewById(R.id.btnSave);
 
         // Blood types
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.blood_types, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerBloodType.setAdapter(adapter);
-
         imgProfile.setOnClickListener(v -> openGallery());
 
         btnSave.setOnClickListener(v -> {
-            String email = etEmail.getText().toString();
-            String password = etPassword.getText().toString();
-            String bloodType = spinnerBloodType.getSelectedItem().toString();
+            String email = etEmail.getText().toString().trim();
+            String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : null;
 
-            // Save the data to SQLite or server
-            Toast.makeText(getContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || imageUri == null) {
+                Toast.makeText(getContext(), "Please select an image and enter email.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            DBHelper dbHelper = new DBHelper(getContext());
+            boolean success = dbHelper.saveOrUpdateProfile(email, imageUri);
+
+            if (success) {
+                Toast.makeText(getContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed to update profile.", Toast.LENGTH_SHORT).show();
+            }
         });
+
+
 
         return view;
     }

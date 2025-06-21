@@ -34,9 +34,9 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.ViewHolder> 
         User user = donorList.get(position);
         holder.textName.setText(user.getName());
         holder.textBloodType.setText("Blood Type: " + user.getBloodType());
-        //holder.textLocation.setText("Location: " + user.location);
+//        holder.textLocation.setText("Location: " + user.location);
 
-//        if (user.imageUri != null) {
+//      if (user.imageUri != null) {
 //            Glide.with(context)
 //                    .load(Uri.parse(user.imageUri))
 //                    .circleCrop()

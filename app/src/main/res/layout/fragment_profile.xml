@@ -55,92 +55,6 @@
             android:layout_marginBottom="24dp" />
 
         <!-- First GridLayout: Blood Type & Donate Request -->
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:rowCount="1"
-            android:alignmentMode="alignMargins"
-            android:useDefaultMargins="true"
-            android:layout_marginBottom="24dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
-
-            <!-- Blood Type -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@color/white"
-                android:padding="16dp">
-                <TextView
-                    android:id="@+id/tvBloodType"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Blood Type"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray" />
-            </LinearLayout>
-
-            <!-- Donated Blood -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@color/white"
-                android:padding="16dp">
-                <TextView
-                    android:id="@+id/donatedblood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Donated"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray" />
-            </LinearLayout>
-
-            <!-- Request Blood -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@color/white"
-                android:padding="16dp">
-                <TextView
-                    android:id="@+id/requestblood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Request"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray" />
-            </LinearLayout>
-        </GridLayout>
 
         <!-- Buttons Grid -->
         <GridLayout
@@ -257,11 +171,9 @@
         </GridLayout>
 
         <!-- Container for child fragments -->
-        <FrameLayout
-            android:id="@+id/profile_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="16dp" />
+
+
 
     </LinearLayout>
+
 </ScrollView>

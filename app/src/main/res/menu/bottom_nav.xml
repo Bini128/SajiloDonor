@@ -11,7 +11,7 @@
         android:icon="@drawable/ic_donor"
         android:title="Donors" />
     <item
-        android:id="@+id/need"
+        android:id="@+id/Seek"
         android:icon="@drawable/ic_heart"
         android:title="Need" />
 

@@ -1,6 +1,7 @@
-package com.example.donorblood;  // Change to your package
+package com.example.donorblood;  
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.donorblood.database.DBHelper;
@@ -83,13 +85,35 @@ public class login extends AppCompatActivity {
 
         if (validUser) {
             Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(login.this,dashboard.class);
-            startActivity(intent);
-            finish();
+
+            // ✅ Save login status
+            SharedPreferences preferences = getSharedPreferences("login_pref", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("isLoggedIn", true);
+            editor.putString("userEmail", email); // optional: store user identity
+            editor.apply();
+
+            // ✅ Ask if user wants to change location
+            new AlertDialog.Builder(this)
+                    .setTitle("Change Location")
+                    .setMessage("Do you want to change your location?")
+                    .setPositiveButton("Allow", (dialogInterface, i) -> {
+                        Intent intent = new Intent(login.this, map_picker.class);
+                        startActivity(intent);
+                        finish(); // so user doesn't return to login
+                    })
+                    .setNegativeButton("Deny", (dialogInterface, i) -> {
+                        Intent intent = new Intent(login.this, dashboard.class);
+                        intent.putExtra("lat", 28.3949);
+                        intent.putExtra("lon", 84.1240);
+                        startActivity(intent);
+                        finish(); // so user doesn't return to login
+                    })
+                    .setCancelable(false)
+                    .show();
+
         } else {
             Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
         }
-        
     }
-
 }
