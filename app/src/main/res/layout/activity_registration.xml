@@ -49,14 +49,17 @@
             android:layout_height="wrap_content"
             android:hint="Enter Phone Number"
             android:inputType="phone" />
-
-        <EditText
-            android:id="@+id/editaddress"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Address"
-            android:inputType="textPostalAddress"
-            android:layout_marginTop="12dp" />
+            android:layout_height="match_parent"
+            android:text="Address"/>
+
+        <Spinner
+            android:id="@+id/spinnerAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
 
         <EditText
             android:id="@+id/editEmail"
@@ -106,7 +109,10 @@
             android:clickable="true"
             android:inputType="none" />
 
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
@@ -114,6 +120,19 @@
             android:hint="Password"
             android:inputType="textPassword"
             android:layout_marginTop="12dp" />
+            <ImageView
+                android:id="@+id/showpassword"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_eye"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
 
         <EditText
             android:id="@+id/editConfirmPassword"
@@ -122,6 +141,16 @@
             android:hint="Confirm Password"
             android:inputType="textPassword"
             android:layout_marginTop="8dp" />
+
+            <ImageView
+                android:id="@+id/confirm_password"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_eye"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/btnNextStep1"

@@ -47,7 +47,8 @@
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.example.donorblood.profile.Edit_profile"
-        android:label="Edit Profile" />
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_edit_profile"/>
 
     <fragment
         android:id="@+id/requestBloodFragment"
@@ -56,7 +57,7 @@
 
     <fragment
         android:id="@+id/changeLocationFragment"
-        android:name="com.example.donorblood.profile.location"
+        android:name="com.example.donorblood.profile.history"
         android:label="Change Location" />
 
     <fragment

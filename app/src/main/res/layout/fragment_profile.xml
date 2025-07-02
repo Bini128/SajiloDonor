@@ -13,6 +13,16 @@
         android:gravity="center_horizontal"
         android:paddingTop="30dp"
         android:layout_marginTop="60dp">
+        <!-- Activation Switch (Visible only if donation record exists) -->
+        <Switch
+            android:id="@+id/switchActivate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activate as Donor"
+            android:layout_marginTop="10dp"
+            android:visibility="gone" />
+
+
 
         <!-- Profile Photo -->
         <ImageView
@@ -68,10 +78,8 @@
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="24dp">
-
-            <!-- Edit Profile Button -->
             <LinearLayout
-                android:id="@+id/btnEditProfile"
+                android:id="@+id/btnDonateRequest"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -85,14 +93,16 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/editpp" />
+                    android:src="@drawable/request" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit Profile"
+                    android:text="Donate Request"
                     android:textSize="14sp" />
             </LinearLayout>
+
+
 
             <!-- Request Blood Button -->
             <LinearLayout
@@ -116,6 +126,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Request Blood"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Edit Profile Button -->
+            <LinearLayout
+                android:id="@+id/btnEditProfile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@color/white"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/editpp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edit Profile"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -145,30 +180,7 @@
             </LinearLayout>
 
             <!-- Donate Request Button -->
-            <LinearLayout
-                android:id="@+id/btnDonateRequest"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="@color/white"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/request" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Donate Request"
-                    android:textSize="14sp" />
-            </LinearLayout>
-        </GridLayout>
+                   </GridLayout>
 
         <!-- Container for child fragments -->
 

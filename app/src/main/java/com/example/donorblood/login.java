@@ -1,70 +1,68 @@
-package com.example.donorblood;  
+package com.example.donorblood;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.donorblood.database.DBHelper;
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class login extends AppCompatActivity {
 
     EditText emailEditText, passwordEditText;
-    ImageView passwordToggle;
     Button loginButton;
-    TextView forgotPassword, signUpText;
-
-    boolean isPasswordVisible = false;
-
-    DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        dbHelper = new DBHelper(this);
-
-        emailEditText = findViewById(R.id.emailEditText);
-        passwordEditText = findViewById(R.id.passwordEditText);
-        passwordToggle = findViewById(R.id.passwordToggle);
-        loginButton = findViewById(R.id.loginButton);
-        forgotPassword = findViewById(R.id.forgotPassword);
-        signUpText = findViewById(R.id.signUpText);
-
-        passwordToggle.setOnClickListener(v -> {
-            if (isPasswordVisible) {
-                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                passwordToggle.setImageResource(R.drawable.ic_eye);
-                isPasswordVisible = false;
-            } else {
-                passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                passwordToggle.setImageResource(R.drawable.ic_eye_off);
-                isPasswordVisible = true;
-            }
-            passwordEditText.setSelection(passwordEditText.getText().length());
-        });
-
-        loginButton.setOnClickListener(v -> validateLogin());
+        View signUpText = findViewById(R.id.signUpText);
 
         signUpText.setOnClickListener(v -> {
             Intent intent = new Intent(login.this, registration.class);
             startActivity(intent);
         });
 
-        forgotPassword.setOnClickListener(v ->
-                Toast.makeText(this, "Forgot password clicked", Toast.LENGTH_SHORT).show()
-        );
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        loginButton = findViewById(R.id.loginButton);
+
+        loginButton.setOnClickListener(v -> validateLogin());
+        EditText editPassword = findViewById(R.id.passwordEditText);
+        ImageView eyeToggle = findViewById(R.id.passwordToggle);
+
+        eyeToggle.setOnClickListener(v -> {
+            if (editPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Show password
+                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                eyeToggle.setImageResource(R.drawable.ic_eye); // icon for "eye open"
+            } else {
+                // Hide password
+                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                eyeToggle.setImageResource(R.drawable.ic_eye_off); // icon for "eye closed"
+            }
+            // Move cursor to the end
+            editPassword.setSelection(editPassword.getText().length());
+        });
+
     }
 
     private void validateLogin() {
@@ -75,45 +73,65 @@ public class login extends AppCompatActivity {
             emailEditText.setError("Enter a valid email");
             return;
         }
-
         if (TextUtils.isEmpty(password)) {
             passwordEditText.setError("Password is required");
             return;
         }
 
-        boolean validUser = dbHelper.checkUser(email, password);
+        loginWithVolley(email, password);
+    }
 
-        if (validUser) {
-            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+    private void loginWithVolley(String email, String password) {
+        String url = "http://192.168.18.17/Sajilodonor/login.php"; // Change to your server IP
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.getBoolean("success")) {
+                            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-            // ✅ Save login status
-            SharedPreferences preferences = getSharedPreferences("login_pref", MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("isLoggedIn", true);
-            editor.putString("userEmail", email); // optional: store user identity
-            editor.apply();
+                            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("email", email);        // Save with key "email"
+                            editor.putBoolean("isLoggedIn", true);
+                            editor.apply();                           // Apply once after all puts
 
-            // ✅ Ask if user wants to change location
-            new AlertDialog.Builder(this)
-                    .setTitle("Change Location")
-                    .setMessage("Do you want to change your location?")
-                    .setPositiveButton("Allow", (dialogInterface, i) -> {
-                        Intent intent = new Intent(login.this, map_picker.class);
-                        startActivity(intent);
-                        finish(); // so user doesn't return to login
-                    })
-                    .setNegativeButton("Deny", (dialogInterface, i) -> {
-                        Intent intent = new Intent(login.this, dashboard.class);
-                        intent.putExtra("lat", 28.3949);
-                        intent.putExtra("lon", 84.1240);
-                        startActivity(intent);
-                        finish(); // so user doesn't return to login
-                    })
-                    .setCancelable(false)
-                    .show();
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Change Location")
+                                    .setMessage("Do you want to change your location?")
+                                    .setPositiveButton("Allow", (dialogInterface, i) -> {
+                                        Intent intent = new Intent(login.this, map_picker.class);
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                                        // Redirect to dashboard
+                                        Intent intent = new Intent(login.this, dashboard.class);
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .show();
+                        } else {
+                            // Handle login failure
+                            Toast.makeText(this, jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                        }
 
-        } else {
-            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
-        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(this, "Invalid email or Password: " + error.getMessage(), Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("email", email);
+                params.put("password", password);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(this).add(request);
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Why are you inactive?"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupReasons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/rbSick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I am sick" />
+
+            <RadioButton
+                android:id="@+id/rbMedicine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I am using medicine" />
+
+            <RadioButton
+                android:id="@+id/rbRecentDonation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I recently donated blood" />
+
+            <RadioButton
+                android:id="@+id/rbOutOfValley"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I am out of the valley" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btnSubmitReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+</ScrollView>

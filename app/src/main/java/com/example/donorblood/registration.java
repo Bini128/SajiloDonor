@@ -3,126 +3,183 @@ package com.example.donorblood;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.donorblood.database.DBHelper;
-import com.example.donorblood.database.HashUtil;
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class registration extends AppCompatActivity {
 
-    EditText editName, editCitizenship, editPhoneNumber, editAddress, editEmail, editDOB,
-            editPassword, editConfirmPassword;
+    EditText editName, editCitizenship, editPhone, editEmail, editDOB, editPassword, editConfirmPassword;
     RadioGroup genderGroup;
-    Button btnNextStep1;
+    Spinner spinnerAddress;
+    Button btnRegister;
+    ImageView showPassword,confirmPassword;
 
     private static final int BLOODGROUP_REQUEST_CODE = 100;
     private String selectedBloodGroup = "";
-    private String HashPassword="";
 
-    DBHelper dbHelper;
+    // Store user inputs
+    String name, citizenship, phone, address, email, dob, gender, password;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        EdgeToEdge.enable(this);
-        dbHelper = new DBHelper(this);
 
         editName = findViewById(R.id.editName);
         editCitizenship = findViewById(R.id.editCitizenship);
-        editPhoneNumber = findViewById(R.id.editPhoneNumber);
-        editAddress = findViewById(R.id.editaddress);
+        editPhone = findViewById(R.id.editPhoneNumber);
         editEmail = findViewById(R.id.editEmail);
         editDOB = findViewById(R.id.editDOB);
         editPassword = findViewById(R.id.editPassword);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
         genderGroup = findViewById(R.id.genderGroup);
-        btnNextStep1 = findViewById(R.id.btnNextStep1);
+        spinnerAddress = findViewById(R.id.spinnerAddress);
+        btnRegister = findViewById(R.id.btnNextStep1);
+        showPassword = findViewById(R.id.showpassword);
+        confirmPassword = findViewById(R.id.confirm_password);
 
-        editDOB.setOnClickListener(v -> showDatePicker());
+// Toggle for Password field
+        showPassword.setOnClickListener(v -> {
+            if (editPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Show password
+                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                showPassword.setImageResource(R.drawable.ic_eye_off); // Change to eye-off icon
+            } else {
+                // Hide password
+                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                showPassword.setImageResource(R.drawable.ic_eye); // Change to eye icon
+            }
+            editPassword.setSelection(editPassword.getText().length());
+        });
 
-        btnNextStep1.setOnClickListener(v -> {
-            try {
-                if (validateInput()) {
-                    // Start blood group selection activity
-                    Intent intent = new Intent(registration.this, bloodgroup.class);
-                    startActivityForResult(intent, BLOODGROUP_REQUEST_CODE);
-                }
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            } catch (InvalidKeySpecException e) {
-                throw new RuntimeException(e);
+// Toggle for Confirm Password field
+        confirmPassword.setOnClickListener(v -> {
+            if (editConfirmPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Show password
+                editConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                confirmPassword.setImageResource(R.drawable.ic_eye_off);
+            } else {
+                // Hide password
+                editConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                confirmPassword.setImageResource(R.drawable.ic_eye);
+            }
+            editConfirmPassword.setSelection(editConfirmPassword.getText().length());
+        });
+
+
+        // Setup Spinner for address
+        String[] addressOptions = {"Kathmandu", "Pokhara", "Lalitpur", "Bhaktapur"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, addressOptions);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAddress.setAdapter(adapter);
+
+        // Setup DOB EditText - show DatePicker on click, disable keyboard
+        editDOB.setInputType(InputType.TYPE_NULL);
+        editDOB.setFocusable(false);
+        editDOB.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR) - 18;  // minimum age 18
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    registration.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        // Display format: DD/MM/YYYY
+                        String displayDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear);
+                        editDOB.setText(displayDate);
+
+                        // Save format: YYYY-MM-DD (store this in a variable or hidden field)
+                        String dobToSave = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                        editDOB.setTag(dobToSave); // optional: store it for sending to server
+                    },
+                    year, month, day
+            );
+            datePickerDialog.show();
+        });
+
+        btnRegister.setOnClickListener(v -> {
+            if (validateInputs()) {
+                // Launch blood group selection activity
+                Intent intent = new Intent(this, bloodgroup.class);
+                startActivityForResult(intent, BLOODGROUP_REQUEST_CODE);
             }
         });
     }
 
-    private void showDatePicker() {
-        final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR) - 18;  // Example minimum age 18
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+    private boolean validateInputs() {
+        name = editName.getText().toString().trim();
+        citizenship = editCitizenship.getText().toString().trim();
+        phone = editPhone.getText().toString().trim();
+        address = spinnerAddress.getSelectedItem().toString();
+        email = editEmail.getText().toString().trim();
+        dob = editDOB.getText().toString().trim();
+        password = editPassword.getText().toString();
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, selectedYear, selectedMonth, selectedDay) ->
-                        editDOB.setText(selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear),
-                year, month, day);
-        datePickerDialog.show();
-    }
+        if (TextUtils.isEmpty(name)) {
+            editName.setError("Name required");
+            return false;
+        }
+        if (TextUtils.isEmpty(citizenship)) {
+            editCitizenship.setError("Citizenship required");
+            return false;
+        }
+        if (TextUtils.isEmpty(phone) || phone.length() < 7) {
+            editPhone.setError("Valid phone required");
+            return false;
+        }
+        // Address spinner is always valid
 
-    private boolean validateInput() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        if (TextUtils.isEmpty(editName.getText().toString().trim())) {
-            editName.setError("Name is required");
+        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editEmail.setError("Valid email required");
             return false;
         }
-        if (TextUtils.isEmpty(editCitizenship.getText().toString().trim())) {
-            editCitizenship.setError("Citizenship is required");
-            return false;
-        }
-        if (TextUtils.isEmpty(editPhoneNumber.getText().toString().trim()) || editPhoneNumber.length() < 7) {
-            editPhoneNumber.setError("Valid phone number is required");
-            return false;
-        }
-        if (TextUtils.isEmpty(editAddress.getText().toString().trim())) {
-            editAddress.setError("Address is required");
-            return false;
-        }
-        if (TextUtils.isEmpty(editEmail.getText().toString().trim()) ||
-                !Patterns.EMAIL_ADDRESS.matcher(editEmail.getText().toString().trim()).matches()) {
-            editEmail.setError("Valid email is required");
-            return false;
-        }
-        if (TextUtils.isEmpty(editDOB.getText().toString().trim())) {
-            editDOB.setError("DOB is required");
+        if (TextUtils.isEmpty(dob)) {
+            editDOB.setError("DOB required");
             return false;
         }
         if (genderGroup.getCheckedRadioButtonId() == -1) {
-            Toast.makeText(this, "Please select gender", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Select gender", Toast.LENGTH_SHORT).show();
             return false;
         }
-
-        if (TextUtils.isEmpty(editPassword.getText().toString()) || editPassword.length() < 6) {
-            editPassword.setError("Password must be at least 6 characters");
+        if (TextUtils.isEmpty(password) || password.length() < 6) {
+            editPassword.setError("Password min 6 chars");
             return false;
         }
-        if (!editPassword.getText().toString().equals(editConfirmPassword.getText().toString())) {
+        if (!password.equals(editConfirmPassword.getText().toString())) {
             editConfirmPassword.setError("Passwords do not match");
             return false;
         }
+
+        // Get gender string
+        int genderId = genderGroup.getCheckedRadioButtonId();
+        RadioButton genderBtn = findViewById(genderId);
+        gender = genderBtn.getText().toString();
+
         return true;
     }
 
@@ -132,41 +189,47 @@ public class registration extends AppCompatActivity {
 
         if (requestCode == BLOODGROUP_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             selectedBloodGroup = data.getStringExtra("selectedBloodGroup");
-            saveUserToDb();
+            sendRegistrationRequest();
         }
     }
 
-    private void saveUserToDb() {
-        String name = editName.getText().toString().trim();
-        String citizenship = editCitizenship.getText().toString().trim();
-        String phone = editPhoneNumber.getText().toString().trim();
-        String address = editAddress.getText().toString().trim();
-        String email = editEmail.getText().toString().trim();
-        String dob = editDOB.getText().toString().trim();
-        int genderId = genderGroup.getCheckedRadioButtonId();
-        RadioButton selectedGenderButton = findViewById(genderId);
-        String gender = selectedGenderButton.getText().toString();
+    private void sendRegistrationRequest() {
+        // Use adb reverse so localhost works; else replace with PC IP if connected via Wi-Fi
+        String url = "http://192.168.18.17/Sajilodonor/register.php";
 
-        String rawPassword = editPassword.getText().toString();
-        String hashedPassword;
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        Toast.makeText(this, obj.getString("message"), Toast.LENGTH_LONG).show();
+                        if (obj.getBoolean("success")) {
+                            // Registration success: go to login
+                            startActivity(new Intent(this, login.class));
+                            finish();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Response parse error", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(this, "Network error: " + error.toString(), Toast.LENGTH_LONG).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("name", name);
+                params.put("citizenship", citizenship);
+                params.put("phone", phone);
+                params.put("address", address);
+                params.put("email", email);
+                params.put("dob", dob);
+                params.put("gender", gender);
+                params.put("password", password);
+                params.put("bloodgroup", selectedBloodGroup);
+                return params;
+            }
+        };
 
-        try {
-            byte[] salt = HashUtil.generateSalt();
-            hashedPassword = HashUtil.hashPassword(rawPassword, salt);
-        } catch (Exception e) {
-            Toast.makeText(this, "Password hashing failed", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        boolean inserted = dbHelper.insertUser(name, citizenship, phone, address, email, dob, gender, hashedPassword, selectedBloodGroup);
-
-        if (inserted) {
-            Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, login.class));
-            finish();
-        } else {
-            Toast.makeText(this, "Registration failed. Email may already exist.", Toast.LENGTH_SHORT).show();
-        }
+        Volley.newRequestQueue(this).add(request);
     }
-
 }

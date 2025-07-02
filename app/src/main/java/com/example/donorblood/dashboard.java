@@ -64,10 +64,11 @@ public class dashboard extends AppCompatActivity {
                         .setMessage("Are you sure you want to logout?")
                         .setPositiveButton("Logout", (dialog, which) -> {
                             // Clear login data and logout
-                            SharedPreferences preferences = getSharedPreferences("login_pref", MODE_PRIVATE);
+                            SharedPreferences preferences = getSharedPreferences("UserSession", MODE_PRIVATE);
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.clear();
                             editor.apply();
+
 
                             Intent intent = new Intent(dashboard.this, login.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
